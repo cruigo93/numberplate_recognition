@@ -1,0 +1,52 @@
+EXPERIMENT_NAME: "baseline"
+FREEZE_ENCODER: False
+RESUME: ""
+DATA:
+  TRAIN: "../train.csv"
+  TEST: "../test.csv"
+
+MODEL:
+  PY: models
+  ARCH: TextRecogModel
+
+AUGMENTATION:
+  PY: transforms
+  TRAIN: get_train_transforms
+  VAL: get_valid_transforms
+
+
+OPTIMIZER:
+  PY: torch.optim
+  CLASS: AdamW
+  ARGS:
+    lr: 0.0003
+    weight_decay: 0.00001
+
+SCHEDULER:
+  PY: torch.optim.lr_scheduler
+  CLASS: CosineAnnealingLR
+  ARGS:
+    T_max: 8
+    eta_min: 0.0000001
+
+BATCH_SIZE: 16
+NUM_WORKERS: 4
+EPOCHS: 100
+
+EARLY_STOPPING:
+  ARGS:
+    monitor: 'avg_val_loss'
+    min_delta: 0.00
+    patience: 10
+    verbose: True
+    mode: 'min'
+
+CHECKPOINT:
+  ARGS:
+    save_top_k: 1
+    prefix: baseline
+    verbose: True
+    monitor: 'avg_val_loss'
+    mode: 'min'
+SEED: 42
+GPUS: 1
