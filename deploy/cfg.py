@@ -4,7 +4,7 @@ import torch
 
 
 def init_model():
-    base = efp.EfficientNet.from_pretrained("efficientnet-b0")
+    base = efp.EfficientNet.from_name("efficientnet-b0")
     num_chars = 32
 
     CONFIG = {

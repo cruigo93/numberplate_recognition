@@ -12,8 +12,12 @@ from pickle import load
 
 
 app = Flask(__name__)
-MODEL = None
-ENCODER = None
+logger.info("...Service started...")
+MODEL = init_model()
+MODEL.eval(); MODEL.to("cuda")
+logger.info("...Model loaded...")
+ENCODER = load(open("baseline_encoder.pkl", "rb"))
+logger.info("...Encoder loaded...")
 
 
 def decode(preds):
@@ -70,12 +74,3 @@ def predict():
     }
     return jsonify(resp), 200
 
-
-if __name__ == "__main__":
-    logger.info("...Service started...")
-    MODEL = init_model()
-    MODEL.eval(); MODEL.to("cuda")
-    logger.info("...Model loaded...")
-    ENCODER = load(open("baseline_encoder.pkl", "rb"))
-    logger.info("...Encoder loaded...")
-    app.run(host="0.0.0.0", port=9090)

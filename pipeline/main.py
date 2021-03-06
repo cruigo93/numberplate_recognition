@@ -1,34 +1,19 @@
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from torch.utils.data import DataLoader
-import torchvision
 import pytorch_lightning as pl
 from pytorch_lightning.loggers import TensorBoardLogger
-from pytorch_lightning.metrics.classification import F1, Accuracy
 from pytorch_lightning.callbacks import EarlyStopping, ModelCheckpoint
 import efficientnet_pytorch as efp
 import os
-from pathlib import Path
-import glob
-import numpy as np
 import pandas as pd
-import json
-import random
 from sklearn.model_selection import train_test_split, KFold
 from sklearn.preprocessing import LabelEncoder
-from sklearn import metrics
-import cv2
-import models
 import datasets
-import transforms
-import yaml
 import importlib
-from collections import OrderedDict
-# from models.selim_zoo import unet
 import utils
 from argparse import ArgumentParser
 from learning import Learner
+from pickle import dump
 
 
 def init_dataloaders(train_items, val_items, encoder, config, test_items=None):
@@ -81,6 +66,8 @@ def main():
     encoder = LabelEncoder()
     encoder.fit(alphabet)
 
+    dump(encoder, config["EXPERIMENT_NAME"]+"_encoder.pkl")
+
     os.makedirs(config["EXPERIMENT_NAME"], exist_ok=True)
     os.makedirs(f"{config['EXPERIMENT_NAME']}/checkpoints", exist_ok=True)
 
@@ -104,10 +91,6 @@ def main():
         ckpt_dict = torch.load(ckpt_path)
         prev_state = utils.load_pytorch_model(ckpt_dict['state_dict'])
         model.load_state_dict(prev_state)
-
-    # evaluator = Evaluator(config)
-    # summury_writer = SummuryWrite(config["SUMMURY"]["FILENAME"]+str(
-    #     fold+1)+".csv", test_filename=f"{config['SUMMURY']['FILENAME']}_test_{str(fold)}.csv")
 
     module = importlib.import_module(config["OPTIMIZER"]["PY"])
     optimizer = getattr(module, config["OPTIMIZER"]["CLASS"])(

@@ -1,0 +1,1 @@
+gunicorn -b 0.0.0.0:9090 -w 1 app:app --timeout 3000
