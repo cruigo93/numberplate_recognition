@@ -11,6 +11,6 @@ To predict
 
 ```json
 {
-    "base64": image_in_base64
+    "base64": "image_in_base64"
 }
 ```
